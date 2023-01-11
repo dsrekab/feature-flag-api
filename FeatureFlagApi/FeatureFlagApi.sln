@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatureFlagApi", "FeatureFlagApi\src\FeatureFlagApi\FeatureFlagApi.csproj", "{68927227-5C1C-4BC2-9107-262E1FCF2684}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatureFlagTests.Unit", "FeatureFlagTests.Unit\FeatureFlagTests.Unit.csproj", "{E5F99F52-23F8-41C8-B6E4-F40FC4A1D93F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68927227-5C1C-4BC2-9107-262E1FCF2684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68927227-5C1C-4BC2-9107-262E1FCF2684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68927227-5C1C-4BC2-9107-262E1FCF2684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68927227-5C1C-4BC2-9107-262E1FCF2684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F99F52-23F8-41C8-B6E4-F40FC4A1D93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F99F52-23F8-41C8-B6E4-F40FC4A1D93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F99F52-23F8-41C8-B6E4-F40FC4A1D93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F99F52-23F8-41C8-B6E4-F40FC4A1D93F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {58B86FCC-0509-4A1C-B51D-9152A1AF1324}
+	EndGlobalSection
+EndGlobal

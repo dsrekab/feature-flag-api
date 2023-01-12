@@ -20,6 +20,24 @@ namespace FeatureFlagApi.Repositories
             _dynamoDbContext = new DynamoDBContext(_dynamoDbClient);
         }
 
+        public async Task<List<FeatureFlagRepoItem>> GetAllFeatureFlagsByService(string serviceName)
+        {
+            var search = _dynamoDbContext.ScanAsync<FeatureFlagRepoItem>
+              (
+                new[] {
+                    new ScanCondition
+                      (
+                        nameof(FeatureFlagRepoItem.ServiceName),
+                        ScanOperator.Equal,
+                        serviceName.ToLower()
+                      )
+                }
+              );
+
+            var result = await search.GetRemainingAsync();
+            return result;
+        }
+
         public async Task<FeatureFlagRepoItem?> GetFeatureFlag(string serviceName, string flagName)
         {
             var search = _dynamoDbContext.ScanAsync<FeatureFlagRepoItem>

@@ -23,6 +23,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", (string serviceName, string flagName) => featureFlagService?.GetFeatureFlag(serviceName, flagName));
+app.MapGet("/getallfeatureflagsbyservice", (string serviceName) => featureFlagService?.GetAllFeatureFlagsByService(serviceName));
+app.MapGet("/getfeatureflag", (string serviceName, string flagName) => featureFlagService?.GetFeatureFlag(serviceName, flagName));
+app.MapGet("/isenabled", (string serviceName, string flagName) => featureFlagService?.FeatureIsEnabled(serviceName, flagName));
 
 app.Run();

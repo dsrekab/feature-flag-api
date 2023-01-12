@@ -4,7 +4,7 @@ namespace FeatureFlagApi.Services.Interfaces
 {
     public interface IFeatureFlagService
     {
-        FeatureFlag GetFeatureFlag(string serviceName, string flagName);
-        bool FeatureIsEnabled(string serviceName, string flagName);
+        Task<FeatureFlag> GetFeatureFlag(string serviceName, string flagName);
+        Task<bool> FeatureIsEnabled(string serviceName, string flagName);
     }
 }

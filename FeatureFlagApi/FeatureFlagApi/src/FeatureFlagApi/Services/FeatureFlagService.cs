@@ -13,22 +13,23 @@ namespace FeatureFlagApi.Services
             _featureFlagRepository=featureFlagRepository;
         }
 
-        public bool FeatureIsEnabled(string serviceName, string flagName)
+        public async Task<bool> FeatureIsEnabled(string serviceName, string flagName)
         {
-            var flag = _featureFlagRepository.GetFeatureFlag(serviceName, flagName);
+            var flag = await _featureFlagRepository.GetFeatureFlag(serviceName, flagName);
 
-            if (flag == null || flag.Enabled==null)
-            {
-                return false;
-            }
-            else
-            {
-                return flag.Enabled.Value;
-            }
+            return flag?.Enabled == true;
         }
 
-
-        public FeatureFlag GetFeatureFlag(string serviceName, string flagName)
-            => _featureFlagRepository.GetFeatureFlag(serviceName, flagName);
+        public async Task<FeatureFlag> GetFeatureFlag(string serviceName, string flagName)
+        {
+            var featureFlagRepoItem = await _featureFlagRepository.GetFeatureFlag(serviceName, flagName);
+            
+            return new FeatureFlag
+            {
+                ServiceName = featureFlagRepoItem?.ServiceName ?? serviceName,
+                FlagName = featureFlagRepoItem?.FlagName ?? flagName,
+                Enabled = featureFlagRepoItem?.Enabled ?? false
+            };
+        }
     }
 }

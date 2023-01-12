@@ -11,10 +11,7 @@ namespace FeatureFlagApi.Repositories
             {
                 ServiceName = serviceName,
                 FlagName = flagName,
-                EnabledFor = new EnabledFor
-                {
-                    All = true
-                }
+                Enabled = true
             };
         }
     }

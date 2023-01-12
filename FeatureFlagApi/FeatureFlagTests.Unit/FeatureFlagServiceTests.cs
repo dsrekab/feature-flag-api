@@ -25,10 +25,7 @@ namespace FeatureFlagTests.Unit
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "EnabledFlag",
-                    EnabledFor = new EnabledFor
-                    {
-                        All = true
-                    }
+                    Enabled = true
                 });
 
             var actual = _sut.FeatureIsEnabled("UnitTestService", "EnabledFlag");
@@ -37,14 +34,14 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledForAllIsNull()
+        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledIsFalse()
         {
             _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagNullEnabledFor"))
                 .Returns(new FeatureFlag
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "FlagNullEnabledFor",
-                    EnabledFor = null
+                    Enabled = false
                 });
 
             var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagNullEnabledFor");
@@ -53,57 +50,39 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledForAllIsEmpty()
+        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledIsNull()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagMissingEnabledFor"))
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagNullEnabledFor"))
                 .Returns(new FeatureFlag
                 {
                     ServiceName = "UnitTestService",
-                    FlagName = "FlagMissingEnabledFor",
-                    EnabledFor = new EnabledFor()
+                    FlagName = "FlagNullEnabledFor",
+                    Enabled = null
                 });
 
-            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagMissingEnabledFor");
+            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagNullEnabledFor");
 
             actual.Should().BeFalse();
         }
 
         [Fact]
-        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledForAllIsFalse_AndRolloutIsNull()
+        public void FeatureIsEnabled_ReturnsFalse_WhenFlagIsNull()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagNullRollout"))
-                .Returns(new FeatureFlag
-                {
-                    ServiceName = "UnitTestService",
-                    FlagName = "FlagNullRollout",
-                    EnabledFor = new EnabledFor
-                    {
-                        All = false,
-                        Rollout = null
-                    }
-                });
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagNullEnabledFor"))
+                .Returns((FeatureFlag)null);
 
-            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagNullRollout");
+            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagNullEnabledFor");
 
             actual.Should().BeFalse();
         }
 
         [Fact]
-        public void FeatureIsEnabled_ReturnsFalse_WhenEnabledForAllIsFalse_AndRolloutIsEmpty()
+        public void FeatureIsEnabled_ReturnsFalse_WhenFlagIsEmpty()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagMissingRollout"))
-                .Returns(new FeatureFlag
-                {
-                    ServiceName = "UnitTestService",
-                    FlagName = "FlagMissingRollout",
-                    EnabledFor = new EnabledFor
-                    {
-                        All = false,
-                        Rollout = new Rollout()
-                    }
-                });
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "FlagNullEnabledFor"))
+                .Returns(new FeatureFlag());
 
-            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagMissingRollout");
+            var actual = _sut.FeatureIsEnabled("UnitTestService", "FlagNullEnabledFor");
 
             actual.Should().BeFalse();
         }

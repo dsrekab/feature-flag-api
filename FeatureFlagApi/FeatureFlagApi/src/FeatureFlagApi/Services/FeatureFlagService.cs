@@ -20,6 +20,16 @@ namespace FeatureFlagApi.Services
             return flag?.Enabled == true;
         }
 
+        public async Task<List<FeatureFlag>> GetAllFeatureFlagsByService(string serviceName)
+        {
+            var serviceFlags = await _featureFlagRepository.GetAllFeatureFlagsByService(serviceName);
+            var retVal = new List<FeatureFlag>();
+
+            serviceFlags?.ForEach(f => retVal.Add(new FeatureFlag { ServiceName = f.ServiceName, FlagName = f.FlagName, Enabled = f.Enabled }));
+
+            return retVal;
+        }
+
         public async Task<FeatureFlag> GetFeatureFlag(string serviceName, string flagName)
         {
             var featureFlagRepoItem = await _featureFlagRepository.GetFeatureFlag(serviceName, flagName);

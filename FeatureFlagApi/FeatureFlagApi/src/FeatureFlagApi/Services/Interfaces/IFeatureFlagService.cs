@@ -6,5 +6,6 @@ namespace FeatureFlagApi.Services.Interfaces
     {
         Task<FeatureFlag> GetFeatureFlag(string serviceName, string flagName);
         Task<bool> FeatureIsEnabled(string serviceName, string flagName);
+        Task<List<FeatureFlag>> GetAllFeatureFlagsByService(string serviceName);
     }
 }

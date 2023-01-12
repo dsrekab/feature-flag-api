@@ -4,6 +4,6 @@
     {
         public string? ServiceName { get; set; }
         public string? FlagName { get; set; }
-        public EnabledFor? EnabledFor { get; set; }
+        public bool? Enabled { get; set; }
     }
 }

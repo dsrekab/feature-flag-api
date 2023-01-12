@@ -17,21 +17,13 @@ namespace FeatureFlagApi.Services
         {
             var flag = _featureFlagRepository.GetFeatureFlag(serviceName, flagName);
 
-            if (flag == null || flag.EnabledFor==null)
+            if (flag == null || flag.Enabled==null)
             {
                 return false;
             }
             else
             {
-                if (flag.EnabledFor.All==null)
-                {
-                    //more logic here later
-                    return false;
-                }
-                else
-                {
-                    return flag.EnabledFor.All.Value;
-                }
+                return flag.Enabled.Value;
             }
         }
 

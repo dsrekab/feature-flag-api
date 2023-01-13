@@ -1,6 +1,4 @@
-using FeatureFlagApi.Repositories;
-using FeatureFlagApi.Repositories.Interfaces;
-using FeatureFlagApi.Services;
+using FeatureFlagApi;
 using FeatureFlagApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +10,7 @@ builder.Services.AddControllers();
 // package will act as the webserver translating request and responses between the Lambda event source and ASP.NET Core.
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
-builder.Services.AddTransient<IFeatureFlagService, FeatureFlagService>();
-builder.Services.AddTransient<IFeatureFlagRepository, FeatureFlagRepository>();
+builder.Services.AddFeatureFlagServices();
 
 var app = builder.Build();
 

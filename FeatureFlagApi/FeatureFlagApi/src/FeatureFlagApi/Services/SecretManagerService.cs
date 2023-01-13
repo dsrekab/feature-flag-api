@@ -5,7 +5,6 @@ using FeatureFlagApi.Exceptions;
 using FeatureFlagApi.Models;
 using FeatureFlagApi.Services.Interfaces;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace FeatureFlagApi.Services
 {
@@ -13,10 +12,12 @@ namespace FeatureFlagApi.Services
     {
         private List<SecretKeyValues> _secretKeyValues = new List<SecretKeyValues>();
         private readonly IConfiguration _configuration;
+        private readonly ILogger<ISecretManagerService> _logger;
 
-        public SecretManagerService(IConfiguration configuration)
+        public SecretManagerService(IConfiguration configuration, ILogger<ISecretManagerService> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<string> GetSecret(string secretName)
@@ -39,6 +40,8 @@ namespace FeatureFlagApi.Services
 
         public async Task<string> GetSecretKeyValue(string region, string secretName, string key)
         {
+            _logger.LogWarning("This is a test of log for {SecretName}", secretName);
+
             var retVal = _secretKeyValues.Where(s=>s.SecretName.ToLower() == secretName.ToLower()).FirstOrDefault()?.SecretKeyValuePairs[key];
 
             if (retVal == null)

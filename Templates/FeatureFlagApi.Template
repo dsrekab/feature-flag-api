@@ -1,0 +1,28 @@
+Resources:
+  FeatureFlagApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: FeatureFlagApi
+      Handler: FeatureFlagApi
+      Runtime: dotnet6
+      Role: arn:aws:iam::773772377432:role/FeatureFlagApi-role
+      MemorySize: 256
+      Code:
+        S3Bucket: feature-flag-api-artifact
+        S3Key: 5670433787212ded39eb5ea1b7ac412d
+  FeatureFlagFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunctionUrl
+      FunctionName: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+      FunctionUrlAuthType: NONE
+      Principal: '*'
+  FeatureFlagApiFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+  FeatureFlagLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 1

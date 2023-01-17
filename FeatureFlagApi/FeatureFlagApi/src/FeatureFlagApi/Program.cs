@@ -21,6 +21,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapGet("/", () => "Hello World");
 app.MapGet("/getallfeatureflagsbyservice", (string serviceName) => featureFlagService?.GetAllFeatureFlagsByService(serviceName));
 app.MapGet("/getfeatureflag", (string serviceName, string flagName) => featureFlagService?.GetFeatureFlag(serviceName, flagName));
 app.MapGet("/isenabled", (string serviceName, string flagName) => featureFlagService?.FeatureIsEnabled(serviceName, flagName));

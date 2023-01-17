@@ -1,4 +1,6 @@
 using FeatureFlagApi;
+using FeatureFlagApi.Exceptions;
+using FeatureFlagApi.Models;
 using FeatureFlagApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +19,19 @@ var app = builder.Build();
 
 var featureFlagService = app.Services.GetService<IFeatureFlagService>();
 
+if (featureFlagService==null)
+{
+    throw new FeatureFlagException("Unable to find IFeatureFlagService");
+}
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello World");
-app.MapGet("/getallfeatureflagsbyservice", (string serviceName) => featureFlagService?.GetAllFeatureFlagsByService(serviceName));
-app.MapGet("/getfeatureflag", (string serviceName, string flagName) => featureFlagService?.GetFeatureFlag(serviceName, flagName));
-app.MapGet("/isenabled", (string serviceName, string flagName) => featureFlagService?.FeatureIsEnabled(serviceName, flagName));
+app.MapGet("/", () => "Use CreateFeatureFlag, GetFeatureFlags, or IsEnabled");
+
+app.MapPost("/CreateFeatureFlag", async (FeatureFlag newFeatureFlag) => await featureFlagService.CreateFeatureFlag(newFeatureFlag));
+app.MapGet("/GetFeatureFlags", async (string? serviceName, string? flagName) => await featureFlagService.GetFeatureFlags(serviceName, flagName));
+app.MapGet("/isenabled", async (string serviceName, string flagName) => await featureFlagService.FeatureIsEnabled(serviceName, flagName));
 
 app.Run();

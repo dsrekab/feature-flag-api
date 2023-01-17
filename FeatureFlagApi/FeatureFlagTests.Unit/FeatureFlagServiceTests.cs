@@ -20,13 +20,13 @@ namespace FeatureFlagTests.Unit
         [Fact]
         public async Task FeatureIsEnabled_ReturnsTrue_WhenEnabledIsTrue()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "EnabledFlag"))
-                .ReturnsAsync(new FeatureFlagRepoItem
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "EnabledFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>{ new FeatureFlagRepoItem
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "EnabledFlag",
                     Enabled = true
-                });
+                } });
 
             var actual = await _sut.FeatureIsEnabled("UnitTestService", "EnabledFlag");
 
@@ -36,13 +36,13 @@ namespace FeatureFlagTests.Unit
         [Fact]
         public async Task FeatureIsEnabled_ReturnsFalse_WhenEnabledIsFalse()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "DisabledFlag"))
-                .ReturnsAsync(new FeatureFlagRepoItem
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "DisabledFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>{ new FeatureFlagRepoItem
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "DisabledFlag",
                     Enabled = false
-                });
+                } });
 
             var actual = await _sut.FeatureIsEnabled("UnitTestService", "DisabledFlag");
 
@@ -52,8 +52,8 @@ namespace FeatureFlagTests.Unit
         [Fact]
         public async Task FeatureIsEnabled_ReturnsFalse_WhenFlagIsNull()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "nullFlag"))
-                .ReturnsAsync((FeatureFlagRepoItem)null);
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "nullFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>());
 
             var actual = await _sut.FeatureIsEnabled("UnitTestService", "nullFlag");
 
@@ -63,8 +63,8 @@ namespace FeatureFlagTests.Unit
         [Fact]
         public async Task FeatureIsEnabled_ReturnsFalse_WhenFlagIsEmpty()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "MissingFlag"))
-                .ReturnsAsync(new FeatureFlagRepoItem());
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "MissingFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem> { new FeatureFlagRepoItem() });
 
             var actual = await _sut.FeatureIsEnabled("UnitTestService", "MissingFlag");
 
@@ -72,17 +72,17 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public async Task GetFeatureFlag_ReturnsTrueFlag_WhenEnabledIsTrue()
+        public async Task GetFeatureFlags_ReturnsTrueFlag_WhenEnabledIsTrue()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "EnabledFlag"))
-                .ReturnsAsync(new FeatureFlagRepoItem
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "EnabledFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>{ new FeatureFlagRepoItem
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "EnabledFlag",
                     Enabled = true
-                });
+                } });
 
-            var actual = await _sut.GetFeatureFlag("UnitTestService", "EnabledFlag");
+            var actual = (await _sut.GetFeatureFlags("UnitTestService", "EnabledFlag")).FirstOrDefault();
 
             actual.ServiceName.Should().BeEquivalentTo("UnitTestService");
             actual.FlagName.Should().BeEquivalentTo("EnabledFlag");
@@ -90,17 +90,17 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public async Task GetFeatureFlag_ReturnsFalseFlag_WhenEnabledIsFalse()
+        public async Task GetFeatureFlags_ReturnsFalseFlag_WhenEnabledIsFalse()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "DisabledFlag"))
-                .ReturnsAsync(new FeatureFlagRepoItem
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "DisabledFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>{ new FeatureFlagRepoItem
                 {
                     ServiceName = "UnitTestService",
                     FlagName = "DisabledFlag",
                     Enabled = false
-                });
+                } });
 
-            var actual = await _sut.GetFeatureFlag("UnitTestService", "DisabledFlag");
+            var actual = (await _sut.GetFeatureFlags("UnitTestService", "DisabledFlag")).FirstOrDefault();
 
             actual.ServiceName.Should().BeEquivalentTo("UnitTestService");
             actual.FlagName.Should().BeEquivalentTo("DisabledFlag");
@@ -108,12 +108,12 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public async Task GetFeatureFlag_ReturnsFalseFlag_WhenFlagIsMissing()
+        public async Task GetFeatureFlags_ReturnsFalseFlag_WhenFlagIsMissing()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlag("UnitTestService", "MissingFlag"))
-                .ReturnsAsync((FeatureFlagRepoItem)null);
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("UnitTestService", "MissingFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem>());
 
-            var actual = await _sut.GetFeatureFlag("UnitTestService", "MissingFlag");
+            var actual = (await _sut.GetFeatureFlags("UnitTestService", "MissingFlag")).FirstOrDefault();
 
             actual.ServiceName.Should().BeEquivalentTo("UnitTestService");
             actual.FlagName.Should().BeEquivalentTo("MissingFlag");
@@ -121,23 +121,53 @@ namespace FeatureFlagTests.Unit
         }
 
         [Fact]
-        public async Task GetAllFeatureFlagsByService_ReturnsListOfFlags()
+        public async Task CreateFeatureFlag_ThrowsException_WhenTryingToCreateAnExistingFlag()
         {
-            _mockFeatureFlagRepository.Setup(m => m.GetAllFeatureFlagsByService("UnitTestService"))
-                .ReturnsAsync(new List<FeatureFlagRepoItem>
-                {
-                    new FeatureFlagRepoItem{ServiceName="UnitTestService",FlagName="flag1",Enabled=true},
-                    new FeatureFlagRepoItem{ServiceName="UnitTestService",FlagName="flag2",Enabled=false},
-                    new FeatureFlagRepoItem{ServiceName="UnitTestService",FlagName="flag3",Enabled=true}
-                });
+            var testFlag = new FeatureFlag { ServiceName = "testService", FlagName = "existingFlag" };
 
-            var actual = await _sut.GetAllFeatureFlagsByService("UnitTestService");
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("testService", "existingFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem> { new FeatureFlagRepoItem { ServiceName = "testService", FlagName = "existingFlag", Enabled = true, LastUpdated = DateTimeOffset.Now } });
 
-            actual.Count.Should().Be(3);
-
-            actual.Where(f => f.FlagName == "flag1").FirstOrDefault().Enabled.Should().BeTrue();
-            actual.Where(f => f.FlagName == "flag2").FirstOrDefault().Enabled.Should().BeFalse();
-            actual.Where(f => f.FlagName == "flag3").FirstOrDefault().Enabled.Should().BeTrue();
+            await _sut.Invoking(f => f.CreateFeatureFlag(testFlag))
+                .Should().ThrowAsync<Exception>()
+                .WithMessage("FeatureFlag existingFlag in Service testService already exists");
         }
+
+        [Fact]
+        public async Task CreateFeatureFlag_ThrowsException_WhenCreatingFlagFails()
+        {
+            var testFlag = new FeatureFlag { ServiceName = "testService", FlagName = "failingFlag" };
+
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("testService", "failingFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem> { new FeatureFlagRepoItem() });
+
+            _mockFeatureFlagRepository.Setup(m => m.CreateFeatureFlag(testFlag))
+                .ReturnsAsync(new FeatureFlagRepoItem());
+
+            await _sut.Invoking(f => f.CreateFeatureFlag(testFlag))
+                .Should().ThrowAsync<Exception>()
+                .WithMessage("Unable to create Feature Flag failingFlag in Service testService");
+        }
+
+        [Fact]
+        public async Task CreateFeatureFlag_ReturnsCreatedFeatureFlag_WhenCreated()
+        {
+            var testFlag = new FeatureFlag { ServiceName = "testService", FlagName = "newFlag" };
+
+            _mockFeatureFlagRepository.Setup(m => m.GetFeatureFlags("testService", "newFlag"))
+                .ReturnsAsync(new List<FeatureFlagRepoItem> { new FeatureFlagRepoItem() });
+
+            _mockFeatureFlagRepository.Setup(m => m.CreateFeatureFlag(testFlag))
+                .ReturnsAsync(new FeatureFlagRepoItem { ServiceName = "testService", FlagName = "newFlag", Enabled = true, LastUpdated = DateTimeOffset.Now });
+
+            var actual = await _sut.CreateFeatureFlag(testFlag);
+
+            actual.Should().NotBeNull();
+            actual.ServiceName.Should().BeEquivalentTo("testService");
+            actual.FlagName.Should().BeEquivalentTo("newFlag");
+            actual.Enabled.Should().BeTrue();
+        }
+
+
     }
 }

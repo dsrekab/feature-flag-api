@@ -22,22 +22,17 @@ namespace FeatureFlagApi.Services
                 throw new Exception($"FeatureFlag {featureFlag.FlagName} in Service {featureFlag.ServiceName} already exists");
             }
 
-            var newFlag = await _featureFlagRepository.CreateFeatureFlag(featureFlag);
-
-            if (string.IsNullOrEmpty(newFlag?.FlagName))
+            try
             {
-                throw new Exception($"Unable to create Feature Flag {featureFlag.FlagName} in Service {featureFlag.ServiceName}");
+                return await _featureFlagRepository.CreateFeatureFlag(featureFlag);
             }
-
-            return new FeatureFlag
+            catch (Exception ex)
             {
-                ServiceName = newFlag.ServiceName,
-                FlagName = newFlag.FlagName,
-                Enabled = newFlag.Enabled
-            };
+                throw new Exception($"Unable to create Feature Flag {featureFlag.FlagName} in Service {featureFlag.ServiceName}.", ex);
+            }
         }
 
-        public async Task<List<FeatureFlagRepoItem>> GetFeatureFlags(string? serviceName, string? flagName)
+        public async Task<List<FeatureFlag>> GetFeatureFlags(string? serviceName, string? flagName)
         {
             var flags = await _featureFlagRepository.GetFeatureFlags(serviceName, flagName);
 
@@ -45,9 +40,9 @@ namespace FeatureFlagApi.Services
             {
                 if (serviceName!=null && flagName !=null)
                 {
-                    return new List<FeatureFlagRepoItem>
+                    return new List<FeatureFlag>
                     {
-                        new FeatureFlagRepoItem
+                        new FeatureFlag
                         {
                             ServiceName=serviceName,
                             FlagName=flagName,
@@ -60,20 +55,11 @@ namespace FeatureFlagApi.Services
             return flags;
         }
 
-
         public async Task<bool> FeatureIsEnabled(string serviceName, string flagName)
         {
             var flags = await GetFeatureFlags(serviceName, flagName);
             
             return flags.FirstOrDefault()?.Enabled == true;
         }
-
-        private FeatureFlag GetFeatureFlag(FeatureFlagRepoItem repoItem)
-            => new FeatureFlag
-            {
-                ServiceName = repoItem.ServiceName,
-                FlagName = repoItem.FlagName,
-                Enabled = repoItem.Enabled
-            };
     }
 }

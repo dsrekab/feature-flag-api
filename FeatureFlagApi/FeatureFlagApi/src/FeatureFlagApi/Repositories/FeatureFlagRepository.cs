@@ -1,6 +1,5 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using FeatureFlagApi.Models;
 using FeatureFlagApi.Repositories.Interfaces;
@@ -22,7 +21,7 @@ namespace FeatureFlagApi.Repositories
             _configuration= configuration;
         }
 
-        public async Task<FeatureFlagRepoItem> CreateFeatureFlag(FeatureFlag newFeatureFlag)
+        public async Task<FeatureFlag> CreateFeatureFlag(FeatureFlag newFeatureFlag)
         {
             await InitDbContext();
 
@@ -34,13 +33,14 @@ namespace FeatureFlagApi.Repositories
 
             if (createdFlag == null)
             {
-                throw new Exception($"Unable to create new Flag {newFeatureFlag.FlagName} for Service {newFeatureFlag.ServiceName}.");
+                //DynamoDb is Eventually Consistent for this project, so if the read doesn't work, just return the requested flag
+                return newFeatureFlag;
             }
 
             return createdFlag;
         }
 
-        public async Task<List<FeatureFlagRepoItem>> GetFeatureFlags(string? serviceName, string? flagName)
+        public async Task<List<FeatureFlag>> GetFeatureFlags(string? serviceName, string? flagName)
         {
             await InitDbContext();
             var request = BuildGetRequest(serviceName, flagName);
@@ -50,9 +50,9 @@ namespace FeatureFlagApi.Repositories
             return result.Items.Select(Map).ToList();
         }
 
-        private FeatureFlagRepoItem Map(Dictionary<string, AttributeValue> valuesToMap)
+        private FeatureFlag Map(Dictionary<string, AttributeValue> valuesToMap)
         {
-            return new FeatureFlagRepoItem
+            return new FeatureFlag
             {
                 FeatureFlagId = Guid.Parse(valuesToMap["FeatureFlagId"].S),
                 ServiceName = valuesToMap["ServiceName"].S,
@@ -85,7 +85,7 @@ namespace FeatureFlagApi.Repositories
                 {"FeatureFlagId", new AttributeValue { S = Guid.NewGuid().ToString()} },
                 {"ServiceName", new AttributeValue{ S = putFeatureFlag.ServiceName} },
                 {"FlagName", new AttributeValue{ S = putFeatureFlag.FlagName} },
-                {"Enabled", new AttributeValue{BOOL = putFeatureFlag.Enabled } },
+                {"Enabled", new AttributeValue{BOOL = putFeatureFlag.Enabled??false } },
                 {"LastUpdated", new AttributeValue{S = DateTimeOffset.UtcNow.ToString() } }
             };
 

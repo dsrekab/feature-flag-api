@@ -4,7 +4,7 @@ namespace FeatureFlagApi.Repositories.Interfaces
 {
     public interface IFeatureFlagRepository
     {
-        Task<FeatureFlagRepoItem> CreateFeatureFlag(FeatureFlag newFeatureFlag);
-        Task<List<FeatureFlagRepoItem>> GetFeatureFlags(string? serviceName, string? flagName);
+        Task<FeatureFlag> CreateFeatureFlag(FeatureFlag newFeatureFlag);
+        Task<List<FeatureFlag>> GetFeatureFlags(string? serviceName, string? flagName);
     }
 }

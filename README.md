@@ -28,7 +28,7 @@ To Get Feature Flags, call /GetFeatureFlags GET endpoint with the following para
 
 If a feature flag is requested but not found, the result will be a feature flag object with the same serviceName and flagName and an Enabled value of False:
 
-'''json
+```json
 {
     "featureFlagId":null,
     "serviceName":"foo",
@@ -36,7 +36,7 @@ If a feature flag is requested but not found, the result will be a feature flag 
     "enabled":false,
     "lastUpdated":"0001-01-01T00:00:00+00:00"
 }
-'''
+```
 
 
 ## RoadMap

@@ -1,5 +1,5 @@
 Resources:
-  FeatureFlagApiFunction:
+  FeatureFlagApi:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: FeatureFlagApi
@@ -9,20 +9,43 @@ Resources:
       MemorySize: 256
       Code:
         S3Bucket: feature-flag-api-artifact
-        S3Key: 5670433787212ded39eb5ea1b7ac412d
+        S3Key: 52ad9ab3520d69c7515ac8cc4f80f36a
   FeatureFlagFunctionPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunctionUrl
-      FunctionName: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+      FunctionName:
+        Fn::GetAtt:
+        - FeatureFlagApi
+        - Arn
       FunctionUrlAuthType: NONE
       Principal: '*'
   FeatureFlagApiFunctionUrl:
     Type: AWS::Lambda::Url
     Properties:
       AuthType: NONE
-      TargetFunctionArn: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+      TargetFunctionArn:
+        Fn::GetAtt:
+        - FeatureFlagApi
+        - Arn
   FeatureFlagLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 1
+  FeatureFlagDynamoDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: FeatureFlagId
+        AttributeType: S
+      - AttributeName: ServiceName
+        AttributeType: S
+      KeySchema:
+      - AttributeName: FeatureFlagId
+        KeyType: HASH
+      - AttributeName: ServiceName
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: '3'
+        WriteCapacityUnits: '3'
+      TableName: FeatureFlags

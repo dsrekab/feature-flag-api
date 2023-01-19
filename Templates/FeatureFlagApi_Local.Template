@@ -1,5 +1,5 @@
 Resources:
-  FeatureFlagApiFunction:
+  FeatureFlagApi:
     Type: 'AWS::Lambda::Function'
     Properties:
       FunctionName: FeatureFlagApi
@@ -12,15 +12,32 @@ Resources:
     Type: 'AWS::Lambda::Permission'
     Properties:
       Action: lambda:InvokeFunctionUrl
-      FunctionName: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+      FunctionName: !GetAtt FeatureFlagApi.Arn
       FunctionUrlAuthType: NONE
       Principal: '*'
   FeatureFlagApiFunctionUrl:
     Type: 'AWS::Lambda::Url'
     Properties:
       AuthType: NONE
-      TargetFunctionArn: arn:aws:lambda:us-east-1:773772377432:function:FeatureFlagApi
+      TargetFunctionArn: !GetAtt FeatureFlagApi.Arn
   FeatureFlagLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       RetentionInDays: 1
+  FeatureFlagDynamoDbTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions: 
+        - AttributeName: "FeatureFlagId"
+          AttributeType: "S"
+        - AttributeName: "ServiceName"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "FeatureFlagId"
+          KeyType: "HASH"
+        - AttributeName: "ServiceName"
+          KeyType: "RANGE"      
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "3"
+        WriteCapacityUnits: "3"
+      TableName: "FeatureFlags"

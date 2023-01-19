@@ -6,7 +6,7 @@ Feature Flag Api is used to check and set Feature Flags to allow production rele
 
 Flags are stored in DynamoDB and API is released with AWS CloudFormation templates to the FeatureFlagApiStack stack in AWS.
 
-##Usage
+## Usage
 To Add a Feature Flags, call /CreateFeatureFlag POST endpoint with the ServiceName, FlagName, and Enabled Value in JSON
 
 ```json
@@ -26,8 +26,18 @@ To Get Feature Flags, call /GetFeatureFlags GET endpoint with the following para
 | /GetFeatureFlag?serviceName=[foo]&flagName=[bar] | The [Bar] feature flag for service [Foo]                |
 
 
-If a feature flag is requested but not found, the result will be a feature flag object with the same serviceName and flagName and an Enabled value of False.
+If a feature flag is requested but not found, the result will be a feature flag object with the same serviceName and flagName and an Enabled value of False:
+
+'''json
+{
+    "featureFlagId":null,
+    "serviceName":"foo",
+    "flagName":"bar",
+    "enabled":false,
+    "lastUpdated":"0001-01-01T00:00:00+00:00"
+}
+'''
 
 
-##RoadMap
+## RoadMap
 Need to create a UI to allow creating, updating, and deleting flags without needing to create the requests manually
